@@ -1,0 +1,282 @@
+Cyber_Cup
+
+N
+uSdddddddddd
+
+entry point = 0x4005f0
+endpoint = 0x00000000004005f0
+
+
+whois
+https://linux.die.net/man/1/whois
+https://lookup.icann.org/en
+
+gpg database:
+https://keyserver.ubuntu.com/
+
+decoder:
+https://www.cachesleuth.com/multidecoder/
+cyberchef
+https://dencode.com/en/
+https://www.boxentriq.com/code-breaking/cipher-identifier#unknown-format		# have both text analyzer and cypher analyzer
+
+steganography:
+strings
+
+
+SQL:
+https://www.tutorialrepublic.com/sql-tutorial/
+---
+sqlite3 test.sql		# create the test.sql data base
+
+
+sqlite3:
+.tables
+.help
+.schema	table		# tell us what are the listed data in the database
+
+# convert sqlite table to the .csv file:
+.header on
+.mode csv
+.output data.csv
+select * from table;
+.quit
+
+
+# logging
+sed -nr 's/PPAPIService: Request: (.*)/\1/p' payments.log > requests.xml
+sed -nr 's/PPAPIService: Response: <\?.*\?>(.*)/\1/p' payments.log > responses.xml
+
+for logs that have similar format to xml |<kdjf>|, save them on .xml file and convert it to .scv using convertcsv
+
+# custom log
+
+Big-Endian vs Little-Endian
+chronological order: order based on time like log files that shows multiple information in one line based on the time stamp
+
+
+Magic	: 91534B590D0A1A0A
+Version : 1 byte
+time	: 4 byte
+host L  : 4 byte
+hostnmae: ?
+flag L	: 4 byte
+flag	: ?
+NOE	: 4 byte
+body	: ?
+SIP	: 4 byte
+DIP	: 4 byte
+time	: ? 4 byte
+byte Tra: 4 byte
+
+create offset:
+starts from 0
+
+Field		offset	long
+magic		0	8
+Version		8	1
+Timestamp	9	4
+Hostname Len	13	4
+Hostname	17	14
+Flag Len	31	4
+Flag		35	20
+NOE		55	4
+Body		59	2592
+
+
+# cyberchef:
+
+https://cyberchef.io/#recipe=Take_bytes(59,2592,false)To_Hex('None',16)Fork('%5C%5Cn','%5C%5Cn',false)Subsection('.%7B8%7D',true,true,false)Find_/_Replace(%7B'option':'Regex','string':'$'%7D,'%20',true,false,true,false)Merge()
+
+https://cyberchef.io/#recipe=Take_bytes(59,2592,false)To_Hex('Space',16)Fork('%5C%5Cn','%5C%5Cn',false)From_Hex('Space')Take_bytes(12,4,false)To_Hex('None',0)From_Base(16)Merge()Sum('Line%20feed')
+
+https://cyberchef.io/#recipe=Take_bytes(59,2592,false)To_Hex('Space',16)Fork('%5C%5Cn','%5C%5Cn',false)From_Hex('Space')Take_bytes(0,8,false)To_Hex('None',4)Change_IP_format('Hex','Dotted%20Decimal')Merge()Unique('Line%20feed',false)Regular_expression('IPv4%20address','(?:(?:%5C%5Cd%7C%5B01%5D?%5C%5Cd%5C%5Cd%7C2%5B0-4%5D%5C%5Cd%7C25%5B0-5%5D)%5C%5C.)%7B3%7D(?:25%5B0-5%5D%7C2%5B0-4%5D%5C%5Cd%7C%5B01%5D?%5C%5Cd%5C%5Cd%7C%5C%5Cd)(?:%5C%5C/%5C%5Cd%7B1,2%7D)?',true,true,false,false,false,true,'List%20matches')
+
+take bytes
+to hex
+fork
+subsection		# .{8}
+find / replace		# $ [ ]
+merge
+change ip formate
+Translate DateTime Formate
+sum
+from base
+unique
+reqular expression	# ipv4
+
+
+# wireless decryption
+aircrack-ng file.pcap
+aircrack-ng -w /usr/share/wordlist/rockyou.txt file.pcap
+
+wlan.wep.iv
+
+wlan.fc.type_subtype eq 12			# filter deauth  attack in Wireshark
+
+
+
+init: client--> number of req for encrypting the data,
+server --> sends the len of res
+req: 
+res: + hash
+
+name		bytes
+init		4
+req		Check (2), len (4), data
+res		count (len), hash (encrypted data, fixed length)
+
+
+init: 5 req, 
+
+req:
+	check: 1047
+	len:	4
+	data:	88
+	data2:	72
+	data3:	107
+	data4:	87
+	data5:	34
+server:		160	
+
+b8c97b08e198fa9ff79a3a9c1f0109b18687b7a1a3ff1772c29b4dc86753d711 8817153ae81d94b5d6c745e63d1df31d5d02bd3b030b820c3c038654fdca619c f8f9e772e1d42c5a327c0fec4101eca5a27b6d93b1d2102db5a37ebd52e34305 f5efdbdcfa80e9c0b9af155f6273ba997cbd3e4afddad2a950dfb9f786c564f7 6a48c4295ef0fa5f9bfed8283a700b63fef2054686e97874096b1c2bc0d96ec4 
+
+
+
+
+
+===============================================================================
+# Crypto
+,,,
+pdf2john pdf.txt
+
+/etc/shadow:
+https://www.cyberciti.biz/faq/understanding-etcshadow-file/
+$1$ is MD5
+$2a$ is Blowfish
+$2y$ is Blowfish
+$5$ is SHA-256
+$6$ is SHA-512
+$y$ is yescrypt
+,,,
+
+# Hashcat
+```
+hashcat -a 0 -m 0 hashes /usr/share/wordlists/rockyou.txt.gz -o pass.txt
+hashcat -a 3 -m 0 hashes2 SKY-HQNT-?d?d?d?d -o pass2.txt
+hashcat -a 6 -m 0 hashes5 law ?d?d -o pass5.txt
+
+```
+
+# John
+```
+john --wordlist=/usr/share/wordlist/rockyou.txt hash.txt
+john --show hash.txt
+john --format=crypt --wordlist=/usr/share/wordlists/rockyou.txt shadow.txt	# yescrypt cracking
+john --format=nt --wordlist=/usr/share/wordlists/rockyou.txt hash.txt		# NTLM
+```
+# RSA
+```
+n = p . q				# find the values from factordb.com	
+d . e = mod (p-1)(q-1)			# mod is the remainder (%), 7mod(2)=1
+http://www.factordb.com			# get factors of n to see which two numbers are multiplied.
+https://planetcalc.com/8979/
+---
+encrypt:
+1. Convert the plaintext message into an integer (ASCII) ==> m 
+2. Encrypt the message to obtain the ciphertext c, where:
+c = m^e (mod n)
+---
+decrypt:
+Calculate the plaintext message m, where is:
+m = c^d (mod n)
+```
+d = 592
+n = 1079
+c = 996 894 379 631 894 82 379 852 631 677 677 194 893
+m = 83  75  89  45  75  82 89  71  45  53  53  51  48
+m = S	K   Y   -   K   R  Y   G   -   5   5   3   0
+SKY-KRYG-5530
+===============================================================================
+# Git Repo
+```
+google dorking:
+
+find git repositories to clone:
+	- intitle: indexof /.git
+find "secret"s from gitlab repository text files:
+	- filetype:txt site:gitlab.* "secret"
+find website logins from gitlab repositories
+	- site:gitlab.* intext:password intext:@gmail.com | @yahoo.com
+find windows login credentials from github repositories
+	- site:github.com intext:"unattend xmlns" AND "password" ext:xml
+
+
+
+git:
+
+# in copyed directoy 
+
+git log
+git show 438fa54ba62144ad84376635d957e5e73d89066e	# give us the diff, or what was added between the two commits
+git branch						# list branches
+git branch -a						# list all branches 
+git init			# create a new git repo
+git clone <location of repo>	# create a copy of a repo
+git add <filename>		# add a file for staging
+git commit			# save all changes in staging into commi
+git checkout <branch>		# switch between git branches
+git checkout 438fa54ba62144ad84376635d957e5e73d89066e	# also, it used to go to specific version of a commit
+git revert <commit reference>	# revert back to an old commit
+
+```
+
+===============================================================================
+# Forensics
+```
+binwalk -D '.*' green_file			# extracting hidden files in a file
+binwalk --extract --dd 'png:png' green_file	# give png files .png exension while extracting them
+exiftool <filename>
+metadata2go					# https://www.metadata2go.com/view-metadata
+
+sodapdf.com					# pdf editor 
+for magic bytes, try "strings" and find the clues for write format.
+use hexedit instead of hexdump for magic bytes, or type hexdump -C, or use xxd
+
+---
+https://book.hacktricks.xyz/generic-methodologies-and-resources/basic-forensic-methodology/memory-dump-analysis/volatility-cheatsheet
+sometimes need to install:
+pip install pycryptodome
+pip3 install pycryptodome
+
+file
+./vol.py -f ./memdump.mem windows.info.Info
+./vol.py -f ./memdump.mem windows.envars.Envars
+./vol.py -f ./memdump.mem windows.filescan.FileScan
+./vol.py -f ./memdump.mem -o ./dump windows.dumpfiles.DumpFiles --virtaddr 0xe0003e836f20
+./vol.py -f ./memdump.mem windows.hashdump.Hashdump
+
+```
+
+===============================================================================
+# Enumeration & Exploitation
+```
+See and extracting the raw content in the elf executable file:
+
+strings RE1_64bit
+readelf -h RE2_64bit		# entry point
+objdump -f RE2_64bit		# endpoint
+objdump -h RE1_64bit | grep gnu.hash
+dd if=RE1_64bit of=out_objdump bs=1 count=$((0x1c)) skip=$((0x298))
+readelf RE1_64bit -e
+
+objdump -h RE1_64bit | grep .data | awk '{print "dd if=RE1_64bit of=out_objdump bs=1 count=$((0x"$3")) skip=$((0x"$6"))"}' | bash	# automatically creates a dd command for extracting the .data portion in the executable file (RE!_64bit).
+
+objdump -h RE2_64bit | grep .text | awk '{print "dd if=RE2_64bit of=out_objdump bs=1 count=$((0x"$3")) skip=$((0x"$6"))"}' | bash
+
+disassemble 
+
+# gdb
+info functions		#  return a list of all the functions 
+call (void) getflagbytid(1234)
+```
